@@ -1,62 +1,89 @@
 <template>
   <form @submit.prevent="validateBeforeSubmit">
+
+    <!-- First Name -->
+    <div class="">
+      <label>First Name</label>
+      <p>
+        <input name="firstNameValidator" v-model="firstname" v-validate="'required|firstNameValidator'" type="text" placeholder="First Name">
+        <span class="errorMsg" v-show="errors.has('firstNameValidator')">{{ errors.first('firstNameValidator') }}</span>
+      </p>
+    </div>
+
+    <!-- Last Name -->
+    <div class="">
+      <label>Last Name</label>
+      <p>
+        <input name="lastNameValidator" v-model="lastname" v-validate="'required|firstNameValidator'" type="text" placeholder="Last Name">
+        <span class="errorMsg" v-show="errors.has('lastNameValidator')">{{ errors.first('lastNameValidator') }}</span>
+      </p>
+    </div>
+
+    <!-- EmailAddress -->
     <div class="">
       <label>Email</label>
       <p>
         <input name="email" v-model="email" v-validate="'required|email'" type="text" placeholder="Email">
-        <span v-show="errors.has('email')">{{ errors.first('email') }}</span>
+        <span class="errorMsg" v-show="errors.has('email')">{{ errors.first('email') }}</span>
       </p>
     </div>
+
+    <!-- Phone number -->
     <div class="">
-      <label>Name</label>
+      <label>Phone Number</label>
       <p>
-        <input name="name" v-model="name" v-validate="'required|alpha'" type="text" placeholder="Name">
-        <span v-show="errors.has('name')">{{ errors.first('name') }}</span>
+        <input name="phoneValidator"  v-model="phone" v-validate="{required:true ,numeric:true,phoneValidator:country }" type="number" placeholder="Phone">
+        <span class="errorMsg" v-show="errors.has('phoneValidator')">{{ errors.first('phoneValidator') }}</span>
       </p>
     </div>
-    <div class="">
-      <label>Phone</label>
-      <p>
-        <input name="phone" v-model="phone" v-validate="'required|numeric'" type="text" placeholder="Phone">
-        <span v-show="errors.has('phone')">{{ errors.first('phone') }}</span>
-      </p>
-    </div>
+    <!-- Gender -->
     <div>
       <p><label> Gender </label></p>
       <label class="radio is-inline" v-for="gendr in genderList" :key="gendr">
-        <input type="radio" v-model="gender" :value="gendr" class="radio-input" v-validate="'required|alpha'" name="">
-        <span class="radio-label">{{ gendr }}</span>
+        <input type="radio" v-model="gender" :value="gendr" class="radioBtn" v-validate="'required|genderValidator'" name="genderValidator">
+        <span class="radioBtn">{{ gendr }}</span>
       </label>
+      <span class="errorMsg" v-show="errors.has('genderValidator')">{{ errors.first('genderValidator') }}</span>
+
     </div>
+
+    <!-- Country -->
     <div>
       <p><label for="selectedOption">Select Country</label></p>
-      <select id="selectedOption" v-model="country" v-validate="'required|alpha'">
+      <select id="selectedOption" v-model="country" v-validate="'required|countrySelectValidator'" name="countrySelectValidator">
         <option value="" disabled>Please select country</option>
         <option v-for="option in countryList" :key="option.value" :value="option.value">{{ option.label }}</option>
       </select>
+      <span class="errorMsg" v-show="errors.has('countrySelectValidator')">{{ errors.first('countrySelectValidator') }}</span>
     </div>
+
+    <!-- state -->
     <div>
       <div v-if="country === 'india'">
         <p><label for="selectedOption">Select state </label></p>
-        <select id="selectedOption" v-model="state" v-validate="'required'">
+        <select id="selectedOption" v-model="state" v-validate="{required:true , stateValidator:country }" name="stateValidator" >
           <option value="" disabled>Please select state</option>
           <option v-for="state in stateList" :key="state" :value="state">{{ state }}</option>
         </select>
-      </div>
-      <div v-else>
-        <label>State</label>
-        <p>
-          <input name="name" v-model="state" v-validate="'required|alpha'" type="text" placeholder="state name">
-          <span v-show="errors.has('name')">{{ errors.first('name') }}</span>
-        </p>
+        <span class="errorMsg" v-show="errors.has('stateValidator')">{{ errors.first('stateValidator') }}</span>
       </div>
 
+      <div v-else>
+        <label>State</label>
+        <div>
+          <input v-validate="'required|stateValidator'" type="text" name="stateValidator" placeholder="state name">
+          <span class="errorMsg" v-show="errors.has('stateValidator')">{{ errors.first('stateValidator') }}</span>
+        </div>
+      </div>
+
+    <!-- Birthdate -->
       <div>
-        <p>Birthdate</p>
-        <input v-validate="'date_format:dd/MM/yyyy|date_between:10/09/2016,20/09/2016'" name="date_between_field" type="text"/>
-        <span class="error">{{ errors.first('birthdate') }}</span>
+        <p> <label for="dateInput">Birthdate</label></p>
+        <input v-validate="{required:true , birthDate:[ageLimit,selectedDate], }" type="date" id="dateInput" v-model="selectedDate" name="birthDate">
+        <span class="errorMsg" v-show="errors.has('birthDate')">{{ errors.first('birthDate') }}</span>
       </div>
     </div>
+
 
     <div class="">
       <p>
@@ -67,17 +94,21 @@
 </template>
 
 <script>
+
 export default {
   name: 'AccountForm2',
   data: () => ({
     email: '',
-    name: '',
+    firstname: '',
+    lastname: '',
     phone: '',
     url: '',
     gender: '',
     country: '',
     state: '',
     birthdate: '',
+    selectedDate: '',
+    ageLimit :18,
     genderList: ['male', 'female'],
     countryList: [
       { value: 'india', label: 'India' },
@@ -107,3 +138,14 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+
+.errorMsg {
+  margin-left: 1rem;
+  color: red;
+}
+.radioBtn {
+  margin-left: 0.5rem;
+}
+</style>
