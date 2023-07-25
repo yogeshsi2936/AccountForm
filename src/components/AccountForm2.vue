@@ -99,16 +99,22 @@
     </div>
   </form>
   <Swiper/>
+  <Raphael />
+  <ChartComponent />
 </div>
 
 </template>
 
 <script>
 import Swiper from './Swiper.vue';
+import Raphael from './Raphael.vue';
+import ChartComponent from './ChartComponent.vue'
 export default {
   name: 'AccountForm2',
   components : {
-    Swiper
+    Swiper,
+    Raphael,
+    ChartComponent
   },
   data: () => ({
     email: '',
