@@ -3,7 +3,11 @@ import App from './App.vue'
 import VeeValidate from 'vee-validate';
 import { Validator } from 'vee-validate';
 import './assets/main.css'
+import Swiper from 'swiper';
+// import Swiper styles
+import 'swiper/css';
 
+const swiper = new Swiper();
 Validator.extend('DateValidator', {
   getMessage: (field,args) => {
     const ageLimit = args[0] ;
@@ -32,17 +36,35 @@ Validator.extend('DateValidator', {
 });
 
 Validator.extend('phoneNumberValidator', {
-  getMessage: (field) => `please enter valid phone number `,
+  getMessage: (field) => ` Please enter valid ${getTitleCase(field)} `,
   validate: (value,[otherValue]) => {
      if (otherValue === 'india') {
-      const val = value.trim().length === 10  ? true : false ;
-      return val
+        return /^\d{10}$/.test(value);
     }else {
-      const val = value.trim().length >= 5 ?  true : false ;
-      return val
+      if (value.trim().length >= 5) {
+        return /^\d{5,}$/.test(value)
+      }else{
+        return false
+      }
     }
   },
 });
+
+// create alphanumericspace validator 
+Validator.extend('alpha_num_space', {
+  getMessage: (field) => `${getTitleCase(field)} allow only alphanumeric characters and spaces`,
+  validate: (value,) => {
+   const isValidString =  /^[a-zA-Z0-9\s]*$/.test(value);
+   return isValidString
+  },
+});
+
+// function get title case 
+function getTitleCase (text) {
+  const result = text.replace(/([A-Z])/g, " $1");
+  const finalResult = result.charAt(0).toUpperCase() + result.slice(1);
+  return finalResult
+}
 function getCurrentAge(currentDate, selectedDate) {
   const timeDiffInMilliseconds = currentDate - selectedDate;
   const oneYearInMilliseconds = 1000 * 60 * 60 * 24 * 365.25; 
@@ -50,6 +72,16 @@ function getCurrentAge(currentDate, selectedDate) {
   return ageDifferenceInYears
 }
 
+
+const dict = {
+  messages:{
+    required : () => 'This is required field',
+    alpha_spaces : (field) => `${field} only contain alphabetic characters as well as spaces`,
+  }
+};
+
+
+Validator.localize('en', dict);
 Vue.use(VeeValidate);
 
 new Vue({
